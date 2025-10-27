@@ -8,12 +8,21 @@ This guide will get you up and running with go-pdf in less than 5 minutes.
 
 ## 2. Start the Service
 
+**Option A: Using pre-built image (fastest)**
+
 ```bash
+docker run -d -p 8080:8080 --name go-pdf ghcr.io/getevo/go-pdf:latest
+```
+
+**Option B: Build from source**
+
+```bash
+git clone https://github.com/getevo/go-pdf.git
+cd go-pdf
 docker-compose up -d
 ```
 
 This will:
-- Build the Docker image (~400MB)
 - Start the service on port 8080
 - Run in the background
 

@@ -1,6 +1,12 @@
 # go-pdf Service
 
+[![Build and Publish Docker Image](https://github.com/getevo/go-pdf/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/getevo/go-pdf/actions/workflows/docker-publish.yml)
+[![Docker Image](https://img.shields.io/badge/docker-ghcr.io%2Fgetevo%2Fgo--pdf-blue)](https://ghcr.io/getevo/go-pdf)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A high-performance, concurrent HTML to PDF conversion service built with Go and the [getevo/evo/v2](https://github.com/getevo/evo) framework. This service provides a simple REST API to convert HTML (with CSS and JavaScript) into PDF documents using wkhtmltopdf.
+
+**Docker Image**: `ghcr.io/getevo/go-pdf:latest`
 
 ## Why This Service Matters
 
@@ -222,19 +228,53 @@ else:
 - Docker Desktop installed on your PC
 - Docker daemon running
 
-### Method 1: Using Docker Run
+### Method 1: Using Pre-built Image (Recommended)
 
-1. **Build the Docker image**:
+Pull and run the pre-built image from GitHub Container Registry:
+
+```bash
+docker run -d -p 8080:8080 --name go-pdf ghcr.io/getevo/go-pdf:latest
+```
+
+That's it! The service will be available at `http://localhost:8080`
+
+**With docker-compose:**
+
+```yaml
+version: '3.8'
+services:
+  go-pdf:
+    image: ghcr.io/getevo/go-pdf:latest
+    container_name: go-pdf
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+```
+
+Then run:
+```bash
+docker-compose up -d
+```
+
+### Method 2: Build from Source
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/getevo/go-pdf.git
+   cd go-pdf
+   ```
+
+2. **Build the Docker image**:
    ```bash
    docker build -t go-pdf:latest .
    ```
 
-2. **Run the container**:
+3. **Run the container**:
    ```bash
    docker run -d -p 8080:8080 --name go-pdf go-pdf:latest
    ```
 
-3. **Verify the service is running**:
+4. **Verify the service is running**:
    ```bash
    curl -X POST http://localhost:8080/api/v1/generate \
      -H "Content-Type: text/html" \
@@ -242,20 +282,22 @@ else:
      -o test.pdf
    ```
 
-4. **View logs**:
+5. **View logs**:
    ```bash
    docker logs go-pdf
    ```
 
-5. **Stop the container**:
+6. **Stop the container**:
    ```bash
    docker stop go-pdf
    ```
 
-### Method 2: Using Docker Compose
+### Method 3: Using Docker Compose (Build from Source)
 
-1. **Start the service**:
+1. **Clone and start**:
    ```bash
+   git clone https://github.com/getevo/go-pdf.git
+   cd go-pdf
    docker-compose up -d
    ```
 
