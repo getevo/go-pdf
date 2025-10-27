@@ -1,0 +1,27 @@
+Database:
+  Enabled: false
+HTTP:
+  BodyLimit: 50mb
+  CaseSensitive: false
+  Concurrency: 1024
+  DisableDefaultContentType: false
+  DisableDefaultDate: false
+  DisableHeaderNormalizing: false
+  DisableKeepalive: false
+  ETag: false
+  GETOnly: false
+  Host: 0.0.0.0
+  IdleTimeout: 0
+  Network: ""
+  Port: 8080
+  Prefork: false
+  ProxyHeader: X-Forwarded-For
+  ReadBufferSize: 10mb
+  ReadTimeout: 30s
+  ReduceMemoryUsage: false
+  ServerHeader: go-pdf
+  StrictRouting: false
+  UnescapePath: false
+  EnablePrintRoutes: true
+  WriteBufferSize: 4kb
+  WriteTimeout: 60s
