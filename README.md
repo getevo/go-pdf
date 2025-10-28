@@ -53,9 +53,9 @@ The service temporarily stores HTML files and generated PDFs in a cache director
 
 ## How to Use go-pdf
 
-### API Endpoint
+### API Endpoints
 
-**POST /api/v1/generate**
+#### **POST /api/v1/generate**
 
 Converts HTML content to PDF and returns the generated PDF file.
 
@@ -88,6 +88,11 @@ All query parameters are optional and allow you to control the PDF generation be
 | `page_size` | string | - | - | Page size preset (e.g., `A4`, `Letter`, `Legal`) |
 | `enable_forms` | boolean | `false` | - | Use `true` to enable HTML forms in the PDF |
 | `enable_smart_shrinking` | boolean | `false` | - | Use `true` to enable smart content shrinking to fit page |
+| `margin_top` | string | - | - | Top margin (e.g., `10mm`, `0.5in`) |
+| `margin_bottom` | string | - | - | Bottom margin (e.g., `10mm`, `0.5in`) |
+| `margin_left` | string | - | - | Left margin (e.g., `10mm`, `0.5in`) |
+| `margin_right` | string | - | - | Right margin (e.g., `10mm`, `0.5in`) |
+| `orientation` | string | - | - | Page orientation: `portrait` or `landscape` |
 
 **Example with query parameters:**
 
@@ -113,6 +118,14 @@ curl -X POST "http://localhost:8080/api/v1/generate?lowquality=true&image_qualit
   -H "Content-Type: text/html" \
   -d '<html><body><h1>Compressed PDF</h1></body></html>' \
   -o compressed.pdf
+```
+
+```bash
+# Generate landscape PDF with custom margins
+curl -X POST "http://localhost:8080/api/v1/generate?orientation=landscape&margin_top=20mm&margin_bottom=20mm&margin_left=15mm&margin_right=15mm" \
+  -H "Content-Type: text/html" \
+  -d '<html><body><h1>Landscape Report</h1><p>This is a wide format document.</p></body></html>' \
+  -o landscape.pdf
 ```
 
 #### Example Usage with curl
@@ -219,6 +232,51 @@ if response.status_code == 200:
     print('PDF generated successfully!')
 else:
     print(f'Error: {response.status_code}')
+```
+
+#### **GET /health**
+
+Health check endpoint for monitoring service status and readiness.
+
+**Response (HTTP 200 - Healthy):**
+
+```json
+{
+  "status": "healthy",
+  "service": "go-pdf",
+  "wkhtmltopdf": "wkhtmltopdf 0.12.6 (with patched qt)\n",
+  "cached_files": 4,
+  "timestamp": "2025-10-28T00:00:00Z"
+}
+```
+
+**Response (HTTP 503 - Unhealthy):**
+
+```json
+{
+  "status": "unhealthy",
+  "message": "wkhtmltopdf is not available",
+  "error": "exec: \"wkhtmltopdf\": executable file not found"
+}
+```
+
+**Example Usage:**
+
+```bash
+# Check service health
+curl http://localhost:8080/health
+```
+
+```python
+# Python health check
+import requests
+
+response = requests.get('http://localhost:8080/health')
+if response.status_code == 200:
+    print('Service is healthy')
+    print(f"Cached files: {response.json()['cached_files']}")
+else:
+    print('Service is unhealthy')
 ```
 
 ## How to Install Using Docker

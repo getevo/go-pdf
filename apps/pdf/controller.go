@@ -141,6 +141,37 @@ func (c Controller) Generate(request *evo.Request) any {
 		args = append(args, "--disable-smart-shrinking")
 	}
 
+	// 10. Margin Top
+	if marginTop := request.Query("margin_top").String(); marginTop != "" {
+		args = append(args, "--margin-top", marginTop)
+	}
+
+	// 11. Margin Bottom
+	if marginBottom := request.Query("margin_bottom").String(); marginBottom != "" {
+		args = append(args, "--margin-bottom", marginBottom)
+	}
+
+	// 12. Margin Left
+	if marginLeft := request.Query("margin_left").String(); marginLeft != "" {
+		args = append(args, "--margin-left", marginLeft)
+	}
+
+	// 13. Margin Right
+	if marginRight := request.Query("margin_right").String(); marginRight != "" {
+		args = append(args, "--margin-right", marginRight)
+	}
+
+	// 14. Orientation (Portrait or Landscape)
+	if orientation := request.Query("orientation").String(); orientation != "" {
+		// Validate orientation (case insensitive)
+		switch orientation {
+		case "portrait", "Portrait":
+			args = append(args, "--orientation", "Portrait")
+		case "landscape", "Landscape":
+			args = append(args, "--orientation", "Landscape")
+		}
+	}
+
 	// Add input and output paths
 	args = append(args, htmlPath, pdfPath)
 
@@ -195,6 +226,37 @@ func (c Controller) Generate(request *evo.Request) any {
 
 	// Return PDF file
 	return pdfData
+}
+
+// Health handles GET /health
+// Returns health status of the service
+func (c Controller) Health(request *evo.Request) any {
+	// Check if wkhtmltopdf is available
+	cmd := exec.Command("wkhtmltopdf", "--version")
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
+		request.Status(503)
+		return map[string]any{
+			"status":  "unhealthy",
+			"message": "wkhtmltopdf is not available",
+			"error":   err.Error(),
+		}
+	}
+
+	// Count cached files
+	cacheMutex.RLock()
+	cachedFiles := len(fileCreationTimes)
+	cacheMutex.RUnlock()
+
+	request.Status(200)
+	return map[string]any{
+		"status":        "healthy",
+		"service":       "go-pdf",
+		"wkhtmltopdf":   string(output),
+		"cached_files":  cachedFiles,
+		"timestamp":     time.Now().Format(time.RFC3339),
+	}
 }
 
 // cleanupCache removes cached files older than 1 hour

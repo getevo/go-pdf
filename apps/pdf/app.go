@@ -20,7 +20,10 @@ func (App) Router() error {
 	// POST endpoint for PDF generation
 	evo.Post("/api/v1/generate", controller.Generate)
 
-	log.Info("PDF routes registered: POST /api/v1/generate")
+	// GET endpoint for health check
+	evo.Get("/health", controller.Health)
+
+	log.Info("PDF routes registered: POST /api/v1/generate, GET /health")
 	return nil
 }
 
